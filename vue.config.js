@@ -5,6 +5,8 @@
  */
 const path = require('path');
 
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+
 module.exports = {
 	// 基本路径 (Vue CLI3.3 起已弃用，请使用 publicPath)
 	/**
@@ -14,7 +16,7 @@ module.exports = {
 	*/
 
 	publicPath: process.env.NODE_ENV === 'production'
-		? '/'
+		? 'http://my.com/vue/myvue/dist/'
 		: '/',
 
 	// 输出文件目录
@@ -30,7 +32,22 @@ module.exports = {
 	filenameHashing: true,
 
 	// 多页面构建
-	//pages: { },
+	pages: { 
+		index: {
+			entry: 'src/views/index/index.js',
+			template: 'src/views/index/index.html',
+			filename: 'index.html',
+			title: 'Index Page',
+			chunks: ['chunk-vendors', 'chunk-common', 'index']
+		},
+		live: {
+			entry: 'src/views/live/live.js',
+			template: 'src/views/live/live.html',
+			filename: 'live.html',
+			title: 'Index Page',
+			chunks: ['chunk-vendors', 'chunk-common', 'live']
+		}
+	},
 
 	// EsLint-Loader 是否在保存时检查
 	// lintOnSave: true,
@@ -49,7 +66,7 @@ module.exports = {
 	// 如果这个值是一个函数，则会接收被解析的配置作为参数。
 	// 该函数及可以修改配置并不返回任何东西，也可以返回一个被克隆或合并过的配置版本。
 	/**
-	configgureWebpack: config => {
+	configureWebpack: config => {
 		if (process.env.NODE_ENV === 'production') {
 			// 为生产环境修改配置...
 		} else {
