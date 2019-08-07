@@ -4,8 +4,34 @@
  * See: https://cli.vuejs.org/zh/config/
  */
 const path = require('path');
+const glob = require('glob');
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`argv[3]: ${process.argv[3]}`);
+
+function getEntry(globPath) {
+	let entries = {};
+	let basename, tmp, pathname, appname;
+
+	glob.sync(globPath).forEach((entry) => {
+		basename = path.basename(entry, path.extname(entry));
+
+		tmp = entry.split('/').splice(-3);
+
+		pathname = basename; // 正确输出 JS 与 HTML 的路径
+
+		entries[pathname] = {
+			entry: `src/${tmp[0]}/${tmp[1]}/${tmp[1]}.js`,
+			template: `src/${tmp[0]}/${tmp[1]}/${tmp[2]}`,
+			title: `${tmp[2]}`,
+			filename: `${tmp[2]}`
+		};
+	});
+	return entries;
+}
+
+//let pages = getEntry('./src/views/**?/*.html');
+
 
 module.exports = {
 	// 基本路径 (Vue CLI3.3 起已弃用，请使用 publicPath)
@@ -32,6 +58,8 @@ module.exports = {
 	filenameHashing: true,
 
 	// 多页面构建
+	//pages: pages,
+	/**
 	pages: { 
 		index: {
 			entry: 'src/views/index/index.js',
@@ -48,6 +76,7 @@ module.exports = {
 			chunks: ['chunk-vendors', 'chunk-common', 'live']
 		}
 	},
+	*/
 
 	// EsLint-Loader 是否在保存时检查
 	// lintOnSave: true,
@@ -77,6 +106,8 @@ module.exports = {
 
 	// 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。
 	// 允许对内部的 webpack 配置进行更细粒度的修改。
+	// see https://github.com/vuejs/vue-cli/blob/dev/docs/zh/guide/webpack.md
+	// see https://github.com/neutrinojs/webpack-chain
 	/**
 	chainWebpack: config => {
 		config.module
@@ -106,12 +137,17 @@ module.exports = {
 	devServer: {
 		host: '0.0.0.0',
 		port: 8080,
+		host: 'file.qf.56.com',
 		https: false,	// false
 		open: true,		// 自动打开浏览器
 		hotOnly: false,
 		proxy: null,	// 设置代理
 		before: app => {}
 	},
+
+	// 是否为 Babel 或 TypeSctipt 使用 thread-loader
+	// 构建时开启多进程处理编译
+	//parallel: require('os').cpus().length > 1,
 	
 	// PWA 插件相关配置
 	pwa: {},
