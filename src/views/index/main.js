@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import router from '../../router/router'
 import store from '../../store/store'
-import Index from './index.vue';
+import Index from './main.vue';
 
 new Vue({
   router,

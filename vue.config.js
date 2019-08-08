@@ -3,34 +3,48 @@
  * Copyright 2005-2019 56.com
  * See: https://cli.vuejs.org/zh/config/
  */
+const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(process.argv);
 console.log(`argv[3]: ${process.argv[3]}`);
 
+/**
+ * views目录下页面模板命令与该目录命名一致。
+ * 如：直播页 live 目录下的模板命名：live.html
+ * 入口文件统一命名为：main.js
+ */
 function getEntry(globPath) {
 	let entries = {};
-	let basename, tmp, pathname, appname;
 
 	glob.sync(globPath).forEach((entry) => {
-		basename = path.basename(entry, path.extname(entry));
+		// basename 返回路径最后一部分
+		const pageName = path.basename(path.dirname(entry));
+		// dirname 返回路径的目录名
+		const dirname = path.dirname(entry);
 
-		tmp = entry.split('/').splice(-3);
-
-		pathname = basename; // 正确输出 JS 与 HTML 的路径
-
-		entries[pathname] = {
-			entry: `src/${tmp[0]}/${tmp[1]}/${tmp[1]}.js`,
-			template: `src/${tmp[0]}/${tmp[1]}/${tmp[2]}`,
-			title: `${tmp[2]}`,
-			filename: `${tmp[2]}`
+		// 往 pages 里循环设置
+		entries[pageName] = {
+			entry: entry,
+			filename: `${pageName}.html`,
+			template: `${dirname}/${pageName}.html`,
+			chunks: ['chunk-vendors', 'chunk-common', pageName]
 		};
 	});
 	return entries;
 }
 
-//let pages = getEntry('./src/views/**?/*.html');
+// 自定义页面路径
+let customPath = process.argv[3] || 'sp/demo';
+// 入口路径
+//let pageEntry = path.resolve(`./src/views/${customPath}/main.js`);
+let pageEntry = `./src/views/${customPath}/main.js`;
+
+//let pages = getEntry(`${PAGES_PATH}/**/main.js`);
+let customPages = getEntry(pageEntry);
+console.log(customPages);
 
 
 module.exports = {
@@ -43,7 +57,7 @@ module.exports = {
 
 	publicPath: process.env.NODE_ENV === 'production'
 		? 'http://my.com/vue/myvue/dist/'
-		: '/',
+		: '//s4.56img.com/myv/',
 
 	// 输出文件目录
 	outputDir: 'dist',
@@ -58,7 +72,7 @@ module.exports = {
 	filenameHashing: true,
 
 	// 多页面构建
-	//pages: pages,
+	pages: customPages,
 	/**
 	pages: { 
 		index: {
@@ -135,11 +149,16 @@ module.exports = {
 
 	// webpack-dev-server 相关配置
 	devServer: {
-		host: '0.0.0.0',
 		port: 8080,
-		host: 'file.qf.56.com',
-		https: false,	// false
+		host: 's4.56img.com',
+		http2: true,
+		https: {
+			key: fs.readFileSync('./build/cakeys/www.56.com.key'),
+			cert: fs.readFileSync('./build/cakeys/www.56.com.crt')
+		},	// false
 		open: true,		// 自动打开浏览器
+		openPage: './src/views/index/index.html',
+		//openPage: 'demo/demo.html',
 		hotOnly: false,
 		proxy: null,	// 设置代理
 		before: app => {}
