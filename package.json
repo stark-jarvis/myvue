@@ -7,6 +7,7 @@
     "se": "vue-cli-service serve",
     "dev": "node build/dev-serve.js",
     "build": "vue-cli-service build",
+    "b": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "@vue/cli-service": "^3.9.0",
     "@vue/eslint-config-standard": "^4.0.0",
     "babel-eslint": "^10.0.1",
+    "cli-color": "^1.4.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.18.0",

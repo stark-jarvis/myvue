@@ -6,10 +6,15 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
+const util = require('./build/utils');
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-console.log(process.argv);
 console.log(`argv[3]: ${process.argv[3]}`);
+
+// 处理一下路径
+function resolve(dir) {
+	return path.resolve(__dirname, dir);
+}
 
 /**
  * views目录下页面模板命令与该目录命名一致。
@@ -18,12 +23,13 @@ console.log(`argv[3]: ${process.argv[3]}`);
  */
 function getEntry(globPath) {
 	let entries = {};
+	let pageName;
 
 	glob.sync(globPath).forEach((entry) => {
-		// basename 返回路径最后一部分
-		const pageName = path.basename(path.dirname(entry));
 		// dirname 返回路径的目录名
 		const dirname = path.dirname(entry);
+		// basename 返回路径最后一部分
+		pageName = path.basename(dirname);
 
 		// 往 pages 里循环设置
 		entries[pageName] = {
@@ -33,31 +39,28 @@ function getEntry(globPath) {
 			chunks: ['chunk-vendors', 'chunk-common', pageName]
 		};
 	});
-	return entries;
+	return {
+		entries: entries,
+		pageName: pageName
+	};
 }
 
 // 自定义页面路径
-let customPath = process.argv[3] || 'sp/demo';
+let customPath = process.argv[3] ? process.argv[3].substring(2) : 'sp/demo';
 // 入口路径
-//let pageEntry = path.resolve(`./src/views/${customPath}/main.js`);
-let pageEntry = `./src/views/${customPath}/main.js`;
+let pageEntry = util.checkPath(`./src/views/${customPath}/main.js`);
+
 
 //let pages = getEntry(`${PAGES_PATH}/**/main.js`);
 let customPages = getEntry(pageEntry);
-console.log(customPages);
+console.log(customPages.entries);
 
-
+// vue.config.js
 module.exports = {
 	// 基本路径 (Vue CLI3.3 起已弃用，请使用 publicPath)
-	/**
-	baseUrl: process.env.NODE_ENV === 'production'
-		? '/'
-		: '/',
-	*/
-
 	publicPath: process.env.NODE_ENV === 'production'
-		? 'http://my.com/vue/myvue/dist/'
-		: '//s4.56img.com/myv/',
+		? '//s4.56img.com/myv/'
+		: '/',
 
 	// 输出文件目录
 	outputDir: 'dist',
@@ -72,7 +75,7 @@ module.exports = {
 	filenameHashing: true,
 
 	// 多页面构建
-	pages: customPages,
+	pages: customPages.entries,
 	/**
 	pages: { 
 		index: {
@@ -109,21 +112,39 @@ module.exports = {
 	// 如果这个值是一个函数，则会接收被解析的配置作为参数。
 	// 该函数及可以修改配置并不返回任何东西，也可以返回一个被克隆或合并过的配置版本。
 	/**
+	*/
 	configureWebpack: config => {
 		if (process.env.NODE_ENV === 'production') {
 			// 为生产环境修改配置...
 		} else {
 			// 为开发环境修改配置...
 		}
+
+		/**
+		Object.assign(config, {
+			resolve:{
+				alias: {
+					"@": path.resolve(__dirname, './src'),
+					"@c": path.resolve(__dirname, './src/components')
+				}
+			}
+		});
+		*/
 	},
-	*/
 
 	// 是一个函数，会接收一个基于 webpack-chain 的 ChainableConfig 实例。
 	// 允许对内部的 webpack 配置进行更细粒度的修改。
 	// see https://github.com/vuejs/vue-cli/blob/dev/docs/zh/guide/webpack.md
 	// see https://github.com/neutrinojs/webpack-chain
 	/**
-	chainWebpack: config => {
+	*/
+	chainWebpack: (config) => {
+		// some alias
+		config.resolve.alias
+			.set('api', resolve('./src/api'))
+			.set('assets', resolve('./src/assets'))
+			.set('@c', resolve('./src/components'))
+		/**
 		config.module
 		.rule('images')
 		.use('url-loader')
@@ -132,15 +153,16 @@ module.exports = {
 			// 修改它的选项...
 			return options;
 		}) 
+		*/
 	},
-	*/
 
 	// CSS 相关配置
 	css: {
 		// 启用 CSS modules
-		modules: false,
-		// 是否使用 css 分离插件
-		extract: true,
+		modules: true,
+		// 是否使用 css 分离插件，合并到html模板或单独 css 文件加载
+		// Default: 生产环境 true, 开发环境 false
+		//extract: true,
 		// 开启 CSS Source Maps
 		sourceMap: false,
 		// CSS 预设器配置项
@@ -155,11 +177,12 @@ module.exports = {
 		https: {
 			key: fs.readFileSync('./build/cakeys/www.56.com.key'),
 			cert: fs.readFileSync('./build/cakeys/www.56.com.crt')
-		},	// false
+		},
 		open: true,		// 自动打开浏览器
-		openPage: './src/views/index/index.html',
-		//openPage: 'demo/demo.html',
-		hotOnly: false,
+		//openPage: 'demo.html',
+		openPage: `${customPages.pageName}.html`,
+		//hot: true,
+		//hotOnly: true,
 		proxy: null,	// 设置代理
 		before: app => {}
 	},

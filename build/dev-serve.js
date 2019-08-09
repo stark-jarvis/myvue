@@ -7,7 +7,7 @@ const glob = require('glob');
 
 console.log(`MyVue Project Dev Serve`);
 console.log(process.argv);
-console.log(`argv[3]: ${process.argv[3]}`);
+console.log(`argv[2]: ${process.argv[2]}`);
 
 /**
  * method[1]
@@ -47,26 +47,21 @@ function getEntry(globPath) {
 /**
  * method[2]
  */
-const PAGES_PATH = path.resolve('./src/views');
-
 function getEntry(globPath) {
 	let entries = {};
 
 	glob.sync(globPath).forEach((filePath) => {
 		// dirname 返回路径的目录名
+		const dirname = path.dirname(filePath);
 		// basename 返回路径最后一部分
-		const pageName = path.basename(path.dirname(filePath));
+		const pageName = path.basename(dirname);
 
-		let dirname = path.dirname(filePath);
 		console.log(`filePath: ${filePath}`);
-		//console.log(`dirname: ${path.dirname(filePath)}`);
-		//console.log(`basename: ${path.basename(path.dirname(filePath))}`);
 
 		// 往 pages 里循环设置
 		entries[pageName] = {
 			entry: filePath,
 			filename: `${pageName}.html`,
-			//template: `${PAGES_PATH}/${pageName}/${pageName}.html`,
 			template: `${dirname}/${pageName}.html`,
 			chunks: ['chunk-vendors', 'chunk-common', pageName]
 		};
@@ -75,5 +70,7 @@ function getEntry(globPath) {
 	return entries;
 }
 
-let pages = getEntry(`${PAGES_PATH}/**/main.js`);
-//console.log(pages);
+let customPath = process.argv[2] || 'sp/demo';
+let pageEntry = path.resolve(`./src/views/${customPath}/**/main.js`);
+let pages = getEntry(pageEntry);
+console.log(pages);

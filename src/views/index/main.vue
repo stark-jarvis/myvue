@@ -1,17 +1,13 @@
 <template>
-	<div id="wrapper" class="wrapper">
-		<h3 class="app_title">This is MyVue Index Page!</h3>
-	</div>
+  <div id="wrapper" class="wrapper">
+    <h3 class="app_title">This is MyVue Index Page!!!</h3>
+  </div>
 </template>
 
 <script>
-	
+  //alert('this');
 </script>
 
 <style lang="scss">
-*{padding:0; margin:0;}
-.app_title{
-	font-size: 14px;
-	color: green;
-}
+@import "./index.scss";
 </style>
