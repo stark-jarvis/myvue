@@ -2,14 +2,22 @@
  * Vue FrameWork - v1.0 (2019-08-01T16:03:13+0800)
  * Copyright 2005-2019 56.com
  * See: https://cli.vuejs.org/zh/config/
+ * 此项目约定域名：
+ * 页面主域名：qyy.56.com
+ * 静态文件域名：s4.56img.com
  */
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const util = require('./build/utils');
+const utils = require('./build/utils');
+const console = require('./build/console');
+const PN = `[${process.env.VUE_APP_PN}] > `;
+// 命令行参数
+const BUILD_PATH = process.argv[3] ? process.argv[3].substring(2) : '';
+			
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
-console.log(`argv[3]: ${process.argv[3]}`);
+console.log(`Build Path: ${BUILD_PATH}`);
 
 // 处理一下路径
 function resolve(dir) {
@@ -46,27 +54,37 @@ function getEntry(globPath) {
 }
 
 // 自定义页面路径
-let customPath = process.argv[3] ? process.argv[3].substring(2) : 'sp/demo';
+let customPath = BUILD_PATH || 'sp/demo';
 // 入口路径
-let pageEntry = util.checkPath(`./src/views/${customPath}/main.js`);
+let pageEntry = utils.checkPath(`./src/views/${customPath}/main.js`);
 
 
 //let pages = getEntry(`${PAGES_PATH}/**/main.js`);
 let customPages = getEntry(pageEntry);
-console.log(customPages.entries);
+let pageName = customPages.pageName;
+console.dir(customPages.entries[pageName]);
+
+/**
+console.log('from: /dist/views/'+BUILD_PATH);
+let relativePath = path.relative('/dist/views/'+BUILD_PATH, '/dist/static');
+console.log(`relativePath: ${relativePath}`);
+console.log(`assetsDir: ${relativePath}/${BUILD_PATH}`);
+*/
+
 
 // vue.config.js
 module.exports = {
-	// 基本路径 (Vue CLI3.3 起已弃用，请使用 publicPath)
+	// 基本路径 (Vue CLI3.3 起已弃用baseUrl，请使用 publicPath)
 	publicPath: process.env.NODE_ENV === 'production'
-		? '//s4.56img.com/myv/'
+		? `//s4.56img.com/myv/views/${customPath}`
 		: '/',
 
-	// 输出文件目录
-	outputDir: 'dist',
+	// 输出文件目录, 按当前调试页面目录输出
+	outputDir: `dist/views/${customPath}`,
 
 	// 用于嵌套生成的静态资产(js, css, img, fonts)目录, 相对于 outputDir 目录
-	//assetsDir: '',
+	//assetsDir: 'assets',
+	//assetsDir: `${relativePath}/${BUILD_PATH}`,
 
 	// 指定生成的 index.html 的输出路径(相对于 outputDir)。也可以是一个绝对路径
 	// indexPath: 'index.html',		// Default: 'index.html'
@@ -96,7 +114,7 @@ module.exports = {
 	*/
 
 	// EsLint-Loader 是否在保存时检查
-	// lintOnSave: true,
+	lintOnSave: false,
 	
 	// 是否使用包含运行时编译器的 Vue 核心构建 
 	//runtimeCompiler: false,
@@ -116,6 +134,20 @@ module.exports = {
 	configureWebpack: config => {
 		if (process.env.NODE_ENV === 'production') {
 			// 为生产环境修改配置...
+			/**
+			Object.assign(config.output, {
+				// 资源文件输出到 dist/static 目录
+				// 不配置的话，默认是在 publicPath 目录下
+				//filename: '../../static/' + BUILD_PATH + '/js/[name].[chunkhash:8].js', // 没有指定输出名的文件输出的文件名
+				filename: `${relativePath}/${BUILD_PATH}/js/[name].[chunkhash:8].js`,
+				chunkFilename: `${relativePath}/${BUILD_PATH}/js/[id].[chunkhash:8].js`
+			});
+
+			Object.keys(config.output).forEach((k) => {
+				console.log(k + ': ' + config.output[k]);
+			});
+			*/
+			
 		} else {
 			// 为开发环境修改配置...
 		}
@@ -162,7 +194,7 @@ module.exports = {
 		modules: true,
 		// 是否使用 css 分离插件，合并到html模板或单独 css 文件加载
 		// Default: 生产环境 true, 开发环境 false
-		//extract: true,
+		extract: false,
 		// 开启 CSS Source Maps
 		sourceMap: false,
 		// CSS 预设器配置项
@@ -180,7 +212,7 @@ module.exports = {
 		},
 		open: true,		// 自动打开浏览器
 		//openPage: 'demo.html',
-		openPage: `${customPages.pageName}.html`,
+		openPage: `${pageName}.html`,
 		//hot: true,
 		//hotOnly: true,
 		proxy: null,	// 设置代理

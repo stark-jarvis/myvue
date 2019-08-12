@@ -4,7 +4,8 @@
  */
 'use strict';
 
-var cliColor = require('cli-color');
+const cliColor = require('cli-color');
+const PN = `[${process.env.VUE_APP_PN}] > `;
 
 // 替换 {{ 和 }} 之间的内容为特定颜色
 function addColor(msg, color) {
@@ -15,13 +16,13 @@ function addColor(msg, color) {
 
 module.exports = {
 	// 普通日志，无颜色
-	log: function(msg) { console.log(msg); },
+	log: function(msg) { console.log(`${PN}${msg}`); },
 	// 信息
-	info: function(msg) { console.log( addColor(msg, 'green') ); },
+	info: function(msg) { console.log( addColor(`${PN}${msg}`, 'green') ); },
 	// 警告
-	warn: function(msg) { console.warn( addColor(msg, 'yellow') ); },
+	warn: function(msg) { console.warn( addColor(`${PN}${msg}`, 'yellow') ); },
 	// 错误
-	error: function(msg) { console.error( addColor(msg, 'red') ); },
+	error: function(msg) { console.error( addColor(`${PN}${msg}`, 'red') ); },
 	// 错误并退出
 	errorExit: function(msg) {
 		this.error(msg);
