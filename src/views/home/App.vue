@@ -26,4 +26,8 @@
     }
   }
 }
+.title{
+  text-align:center;
+  padding:10px 0;
+}
 </style>

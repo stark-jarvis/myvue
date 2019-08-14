@@ -8,7 +8,8 @@
     "dev": "node build/dev-serve.js",
     "build": "vue-cli-service build",
     "b": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "in": "vue-cli-service inspect"
   },
   "dependencies": {
     "core-js": "^2.6.5",

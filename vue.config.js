@@ -41,9 +41,14 @@ function getEntry(globPath) {
 
 		// 往 pages 里循环设置
 		entries[pageName] = {
+			// page 的入口
 			entry: entry,
-			filename: `${pageName}.html`,
-			template: `${dirname}/${pageName}.html`,
+			// 在 dist/index.html 的输出
+			filename: `index.html`,
+			//filename: `${pageName}.html`,
+			//template: `${dirname}/${pageName}.html`,
+			// 模块来源
+			template: `${dirname}/index.html`,
 			chunks: ['chunk-vendors', 'chunk-common', pageName]
 		};
 	});
@@ -87,7 +92,7 @@ module.exports = {
 	//assetsDir: `${relativePath}/${BUILD_PATH}`,
 
 	// 指定生成的 index.html 的输出路径(相对于 outputDir)。也可以是一个绝对路径
-	// indexPath: 'index.html',		// Default: 'index.html'
+	//indexPath: `${pageName}.html`,		// Default: 'index.html'
 	
 	// 文件名 hash
 	filenameHashing: true,
@@ -134,6 +139,12 @@ module.exports = {
 	configureWebpack: config => {
 		if (process.env.NODE_ENV === 'production') {
 			// 为生产环境修改配置...
+			/** 图片压缩处理
+			config.module
+				.rule('images')
+				.use('image-webpack-loader')
+				.loader('image-webpack-loader')
+			 */
 			/**
 			Object.assign(config.output, {
 				// 资源文件输出到 dist/static 目录
@@ -176,6 +187,8 @@ module.exports = {
 			.set('api', resolve('./src/api'))
 			.set('assets', resolve('./src/assets'))
 			.set('@c', resolve('./src/components'))
+			// @ is an alias to /src
+			//.set('@', resolve('./src'))
 		/**
 		config.module
 		.rule('images')
