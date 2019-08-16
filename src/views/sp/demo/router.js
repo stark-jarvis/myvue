@@ -22,28 +22,44 @@ const routers = {
 	  path: '/index',
 	  name: 'index',
 	  component: Index,
+	  meta: {
+	    title: 'Home'
+	  }
 	},
 	{
 	  path: '/seller',
 	  name: 'seller',
-	  component: Seller 
+	  component: Seller,
+	  meta: {
+	    title: 'Seller'
+	  }
 	},
 	{
 	  path: '/rating',
 	  name: 'rating',
-	  component: Rating
+	  component: Rating,
+	  meta: {
+	    title: 'Rating'
+	  }
 	}
   ]
 };
 const router = new Router(routers);
 
-router.afterEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
+	console.log(`router beforeEach`);
+	next && next();
+});
+
+router.afterEach((to, from) => {
+    if (to.meta.title) {
+        document.title = to.meta.title;
+    }
 	console.log('router afterEach');
 	console.log(`Router To:`);
 	console.dir(to);
 	console.log(`Router From:`);
 	console.dir(from);
-	console.log(`Router Next: ${next}`);
 });
 
 export default router;

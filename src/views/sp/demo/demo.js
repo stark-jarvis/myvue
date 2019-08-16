@@ -4,9 +4,9 @@
  */
 import Vue from 'vue'
 import router from './router'
-import Home from './home.vue'
+import Demo from './demo.vue'
 
 new Vue({
   router,  // 简写方法，正常是：router: router
-  render: h => h(Home)
+  render: h => h(Demo)
 }).$mount('#app')

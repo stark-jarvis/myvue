@@ -20,6 +20,7 @@ export default {
 		}
     },
 	components: {
+		// 注册组件
 		navbar
 	},
 	beforeCreate() {

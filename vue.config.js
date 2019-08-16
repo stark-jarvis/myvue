@@ -14,6 +14,7 @@ const console = require('./build/console');
 const PN = `[${process.env.VUE_APP_PN}] > `;
 // 命令行参数
 const BUILD_PATH = process.argv[3] ? process.argv[3].substring(2) : '';
+//const BUILD_PATH = process.argv[4] ? process.argv[4].substring(2) : '';
 			
 
 console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
@@ -42,13 +43,15 @@ function getEntry(globPath) {
 		// 往 pages 里循环设置
 		entries[pageName] = {
 			// page 的入口
-			entry: entry,
+			//entry: entry,
+			entry: `${dirname}/${pageName}.js`,
 			// 在 dist/index.html 的输出
 			filename: `index.html`,
 			//filename: `${pageName}.html`,
-			//template: `${dirname}/${pageName}.html`,
 			// 模块来源
-			template: `${dirname}/index.html`,
+			//template: `${dirname}/${pageName}.html`,
+			//template: `${dirname}/index.html`,
+			template: entry,
 			chunks: ['chunk-vendors', 'chunk-common', pageName]
 		};
 	});
@@ -61,7 +64,7 @@ function getEntry(globPath) {
 // 自定义页面路径
 let customPath = BUILD_PATH || 'sp/demo';
 // 入口路径
-let pageEntry = utils.checkPath(`./src/views/${customPath}/main.js`);
+let pageEntry = utils.checkPath(`./src/views/${customPath}/index.html`);
 
 
 //let pages = getEntry(`${PAGES_PATH}/**/main.js`);
@@ -70,29 +73,37 @@ let pageName = customPages.pageName;
 console.dir(customPages.entries[pageName]);
 
 /**
-console.log('from: /dist/views/'+BUILD_PATH);
-let relativePath = path.relative('/dist/views/'+BUILD_PATH, '/dist/static');
-console.log(`relativePath: ${relativePath}`);
-console.log(`assetsDir: ${relativePath}/${BUILD_PATH}`);
 */
+// from值根据 outputDir 配置
+let outputDir = `dist/assets/${customPath}`;
+let relativePath = path.relative(outputDir, 'dist');
+console.log(`from: ${outputDir}`);
+console.log(`relativePath: ${relativePath}`);
+console.log(`indexPath: ${relativePath}/views/${customPath}`);
 
 
 // vue.config.js
 module.exports = {
 	// 基本路径 (Vue CLI3.3 起已弃用baseUrl，请使用 publicPath)
 	publicPath: process.env.NODE_ENV === 'production'
-		? `//s4.56img.com/myv/views/${customPath}`
+		//? `//s4.56img.com/myv/assets/${customPath}`
+		? `${process.env.STATIC_URL}/${customPath}`
 		: '/',
 
 	// 输出文件目录, 按当前调试页面目录输出
-	outputDir: `dist/views/${customPath}`,
+	//outputDir: `dist/views/${customPath}`,
+	//outputDir: `dist`,
+	//outputDir: `dist/assets/${customPath}`,
+	outputDir: outputDir,
 
 	// 用于嵌套生成的静态资产(js, css, img, fonts)目录, 相对于 outputDir 目录
-	//assetsDir: 'assets',
+	// 默认相对于 outputDir 目录下创建 assets 目录
+	//assetsDir: `assets/${customPath}`,
 	//assetsDir: `${relativePath}/${BUILD_PATH}`,
 
 	// 指定生成的 index.html 的输出路径(相对于 outputDir)。也可以是一个绝对路径
 	//indexPath: `${pageName}.html`,		// Default: 'index.html'
+	indexPath: `${relativePath}/views/${customPath}/${pageName}.html`,		// Default: 'index.html'
 	
 	// 文件名 hash
 	filenameHashing: true,
@@ -224,7 +235,6 @@ module.exports = {
 			cert: fs.readFileSync('./build/cakeys/www.56.com.crt')
 		},
 		open: true,		// 自动打开浏览器
-		//openPage: 'demo.html',
 		openPage: `${pageName}.html`,
 		//hot: true,
 		//hotOnly: true,
