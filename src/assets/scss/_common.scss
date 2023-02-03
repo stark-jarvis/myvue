@@ -1,0 +1,96 @@
+/*!
+ * MyVue Common Scss - v1.0 (2019-09-25T15:12:04+0800)
+ * Copyright 2005-2018 56.com
+ */
+@import "./_reset.scss";
+
+/* mixin */
+$base_font_size: 75;
+@mixin px2rem($name, $px) {
+    #{$name}: ($px / $base_font_size) * 1rem;
+}
+div {
+	/*@include px2rem(padding-top, 20);*/
+}
+
+/* 容器宽高比 */
+[aspectratio] {
+	position:relative;
+}
+[aspectratio]::before {
+	content: '';
+	display:block;
+	width:1px;
+	margin-left:-1px;
+	height:0;
+}
+[aspectratio-content] {
+	position:absolute;
+	top:0; left:0; right:0; bottom:0;
+	width:100%; height:100%;
+}
+
+/* 1px */
+@svg 1px-border {
+	height: 4px;
+	width:4px;
+	@rect {
+		fill: transparent;
+		width:100%;
+		height:100%;
+		stroke-width: 25%;  /* 边框宽度 4px * 25%(即1px) */
+		stroke: var(--color, black); /* 颜色 */
+	}
+}
+/* 竖线 */
+.line-1px-bod-right {
+	border-right: 1px solid;
+	border-image: svg(1px-border param(--color red)) 1 stretch;
+}
+
+/* 横线 */
+.line-1px-bod-top {
+	border-top: 1px solid;
+	border-image: svg(1px-border param(--color red)) 1 stretch;
+}
+
+@svg square {
+	@rect {
+		fill: var(--color, black);
+		width: 100%;
+		height: 100%;
+	}
+}
+/* 横线 */
+.line-1px-bck {
+	height:1px;
+	/*background-image: svg(square param(--color, #00b1ff));*/
+	background-image: svg(square param(--color, red));
+}
+
+
+/* 不同的 dpr，使用不用的字体大小 */
+/*
+[data-dpr="1"] {
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, cit, code,
+del, dfn, em, ins, q, samp, small, strong, sub, sup, b, i, hr, dl, dt, dd,
+ol, ul, li, fieldset, legend, label {
+	font-size: 16px;
+}
+}
+[data-dpr="2"] {
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, cit, code,
+del, dfn, em, ins, q, samp, small, strong, sub, sup, b, i, hr, dl, dt, dd,
+ol, ul, li, fieldset, legend, label {
+	font-size: 18px;
+}
+}
+[data-dpr="3"] {
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, cit, code,
+del, dfn, em, ins, q, samp, small, strong, sub, sup, b, i, hr, dl, dt, dd,
+ol, ul, li, fieldset, legend, label {
+	font-size: 20px;
+}
+}  
+*/
+

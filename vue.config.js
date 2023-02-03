@@ -3,7 +3,7 @@
  * Copyright 2005-2019 56.com
  * See: https://cli.vuejs.org/zh/config/
  * 此项目约定域名：
- * 页面主域名：qyy.56.com
+ * 页面主域名：qianfan.tv
  * 静态文件域名：s4.56img.com
  */
 const fs = require('fs');
@@ -11,7 +11,8 @@ const path = require('path');
 const glob = require('glob');
 const utils = require('./build/utils');
 const console = require('./build/console');
-const PN = `[${process.env.VUE_APP_PN}] > `;
+//const PN = `[${process.env.VUE_APP_PN}] > `;
+
 // 命令行参数
 const BUILD_PATH = process.argv[3] ? process.argv[3].substring(2) : '';
 //const BUILD_PATH = process.argv[4] ? process.argv[4].substring(2) : '';
@@ -26,9 +27,11 @@ function resolve(dir) {
 }
 
 /**
- * views目录下页面模板命令与该目录命名一致。
- * 如：直播页 live 目录下的模板命名：live.html
- * 入口文件统一命名为：main.js
+ * views目录下页面模板命名采用固定 index.html
+ * 如：直播页，在 views 下项目目录为：live/index.html
+ * 其余文件可采用与该项目目录一致命名
+ * 如：live.vue、live.scss、live.js
+ * 指定项目构建执行命令：yarn build --home
  */
 function getEntry(globPath) {
 	let entries = {};
@@ -63,7 +66,7 @@ function getEntry(globPath) {
 
 // 自定义页面路径
 let customPath = BUILD_PATH || 'sp/demo';
-// 入口路径
+// 入口路径 根据 index.html 文件
 let pageEntry = utils.checkPath(`./src/views/${customPath}/index.html`);
 
 
@@ -76,10 +79,17 @@ console.dir(customPages.entries[pageName]);
 */
 // from值根据 outputDir 配置
 let outputDir = `dist/assets/${customPath}`;
+/**
+ * path.relative 根据当前工作目录返回 from 到 to 的相对路径
+ * relativePath For 确定 build 时模板 index.html 的输出路径
+ */
 let relativePath = path.relative(outputDir, 'dist');
 console.log(`from: ${outputDir}`);
 console.log(`relativePath: ${relativePath}`);
 console.log(`indexPath: ${relativePath}/views/${customPath}`);
+
+// production STATIC_URL
+console.log('production STATIC_URL: ' + process.env.STATIC_URL);
 
 
 // vue.config.js
@@ -96,8 +106,11 @@ module.exports = {
 	//outputDir: `dist/assets/${customPath}`,
 	outputDir: outputDir,
 
-	// 用于嵌套生成的静态资产(js, css, img, fonts)目录, 相对于 outputDir 目录
-	// 默认相对于 outputDir 目录下创建 assets 目录
+	/* 用于嵌套生成的静态资产(js, css, img, fonts)目录, 相对于 outputDir 目录
+	 * 默认相对于 outputDir 目录下创建 assets 目录, 并创建 img、css、js
+	 * 等目录，所有项目文件均放到相同目录下；
+	 * 使用项目目录路径，自定义了 outputDir，此时会有对应的项目目录下创建 img、css、js 等目录
+	 */ 
 	//assetsDir: `assets/${customPath}`,
 	//assetsDir: `${relativePath}/${BUILD_PATH}`,
 
@@ -222,7 +235,15 @@ module.exports = {
 		// 开启 CSS Source Maps
 		sourceMap: false,
 		// CSS 预设器配置项
-		loaderOptions: {}
+		loaderOptions: {
+			sass: {
+				/**
+				data: `@import "./src/assets/scss/_reset.scss";
+				       @import "./src/assets/scss/_common.scss";`
+				*/
+				data: `@import "./src/assets/scss/_common.scss";`
+			}
+		}
 	},
 
 	// webpack-dev-server 相关配置

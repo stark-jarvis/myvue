@@ -1,0 +1,39 @@
+/*!
+ * index scss - v1.0 (2019-09-23T17:33:05+0800)
+ * Copyright 2005-2018 56.com
+ */
+
+[w-16-9] {
+	aspect-ratio: '16:9';
+}
+
+[w-16-9] {
+	width:100vw;
+}
+ 
+#videoConent{
+	background:#ddd; 
+}
+
+.bod-right{ 
+	height:100px; 
+	margin-right:100px;
+}
+
+.txt{
+	text-indent:2em;
+	text-align:left;
+	padding:20px 40px;
+}
+p.txt.txt-vw{
+	font-size:32px;
+}
+p.px16.ignore{
+	font-size:16px;
+}
+
+[data-dpr="3"] .txt{
+	font-size:22px;
+}
+
+

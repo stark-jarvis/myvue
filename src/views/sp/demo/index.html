@@ -2,8 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="keywords" content="home my vue" />
+<script>
+	var dpr = window.devicePixelRatio;
+	if (dpr) {
+		document.documentElement.setAttribute('data-dpr', dpr);
+	}
+	console.log('dpr: ' + dpr);
+</script>
 <title>Home - My Vue Demo Page</title>
 </head>
 <body>

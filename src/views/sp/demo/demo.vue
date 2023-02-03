@@ -1,8 +1,8 @@
 <template>
   <div id="wrapper" class="wrapper">
-	<img src="./images/m.jpg" alt="" />
-	<img src="./images/icon.png" alt="" />
-    <h3 class="app_title">This is MyVue Demo Page!</h3>
+	<img class="banner-top" src="./images/m.jpg" alt="" />
+	<!--<img src="./images/icon.png" alt="" />-->
+    <h3 class="app_title ignore">This is MyVue Demo Page!</h3>
 	<div class="banner">This is A Banner</div>
 	<!-- navbar 组件 -->
 	<navbar/>
@@ -11,7 +11,9 @@
 
 <script>
 // @c is an alias to /src/components
-import navbar from '@c/common/navbar'
+import navbar from '@c/common/navbar';
+import button from '@c/common/button/button';
+
 export default {
 	name: 'DemoDefault',
     data() {
@@ -49,18 +51,12 @@ export default {
 	},
 	methods: {
 		setData() {
-			this.msg = 'changed msg data.'
+			this.msg = 'changed msg data.';
 		}
 	}
 }
 </script>
 
 <style lang="scss">
-*{padding:0; margin:0;}
-.wrapper{ text-align:center; }
-.app_title{
-  font-size: 14px;
-  color: green;
-}
-.sub-page-item{ height:20px; color:red; }
+	@import "./demo.scss";
 </style>

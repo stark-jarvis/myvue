@@ -1,0 +1,30 @@
+/*!
+ * Demo Scss - v1.0 (2019-09-23T15:58:44+0800)
+ * Copyright 2005-2018 56.com
+ */
+.wrapper{ text-align:center; }
+.banner-top{ width:100%; }
+
+.banner{ 
+	/*@include px2rem(font-size, 180);*/
+	font-size: 20px;
+	line-height:100px;
+	height:100px;
+	background-color:#34fd34;
+}
+.app_title{
+  color: green;
+}
+.ignore{
+  font-size: 20px;
+}
+.sub-page-item { 
+	text-align:left;
+	margin:10px 0 10px;
+	height:40px;
+	color:red; 
+	line-height:0px;
+	@include px2rem(font-size, 16);
+
+	/*background: url('./images/icon.png') no-repeat;*/
+}

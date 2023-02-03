@@ -1,0 +1,11 @@
+/*!
+ * button css - v1.0 (2019-09-30T09:14:42+0800)
+ * Copyright 2005-2018 56.com
+ */
+.btn {
+	width:180px;
+	height:35px;
+	background-color:#f23de3;
+	line-height:35px;
+	text-align:center;
+}
